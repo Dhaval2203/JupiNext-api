@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Employee {
+  id                 Int      @id @default(autoincrement())
+  employeeId         String   @unique
+  employeeName       String
+  password           String
+  designation        String
+  department         String?
+  primaryEmail       String   @unique
+  secondaryEmail     String?
+  bankName           String?
+  bankAccount        String?
+  reportingManagerId Int?
+  dateOfBirth        DateTime @default(now())
+  dateOfJoining      DateTime @default(now())
+  isActive           Boolean  @default(true)
+  createdAt          DateTime @default(now())
+
+  reportingManager   Employee? @relation("ReportingManager", fields: [reportingManagerId], references: [id])
+  subordinates       Employee[] @relation("ReportingManager")
+}
