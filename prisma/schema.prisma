@@ -7,6 +7,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ===================== EMPLOYEE =====================
+
 model Employee {
   id                 Int      @id @default(autoincrement())
   employeeId         String   @unique
@@ -24,6 +26,79 @@ model Employee {
   isActive           Boolean  @default(true)
   createdAt          DateTime @default(now())
 
-  reportingManager   Employee? @relation("ReportingManager", fields: [reportingManagerId], references: [id])
+  reportingManager   Employee?  @relation("ReportingManager", fields: [reportingManagerId], references: [id])
   subordinates       Employee[] @relation("ReportingManager")
+
+  resetOtp           String?
+  resetOtpExpiry     DateTime?
+
+  // Relations
+  timeClocks          TimeClock[]
+  adjustmentRequests AttendanceAdjustment[] @relation("EmployeeAdjustments")
+  reviewedAdjustments AttendanceAdjustment[] @relation("AdjustmentReviewer")
+}
+
+// ===================== TIME CLOCK =====================
+
+model TimeClock {
+  id                   Int      @id @default(autoincrement())
+
+  employeeId           String
+  workDate             DateTime @db.Date
+
+  startWorkTime        DateTime
+  endWorkTime          DateTime?
+
+  totalBreakSeconds    Int      @default(0)
+  totalWorkSeconds     Int      @default(0)
+
+  requiredSeconds      Int      @default(28800) // 8 hours
+  shortageSeconds      Int      @default(0)
+
+  isLessThan8Hours     Boolean  @default(false)
+  hasAdjustmentRequest Boolean  @default(false)
+
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  // Relations
+  employee             Employee @relation(fields: [employeeId], references: [employeeId])
+  adjustment           AttendanceAdjustment?
+
+  @@unique([employeeId, workDate])
+  @@index([employeeId])
+}
+
+// ===================== ADJUSTMENT =====================
+
+model AttendanceAdjustment {
+  id                Int      @id @default(autoincrement())
+
+  timeClockId       Int      @unique
+  employeeId        String
+
+  requestedSeconds  Int
+  reason             String
+  comment            String?
+
+  status             AdjustmentStatus @default(PENDING)
+
+  requestedAt        DateTime @default(now())
+  reviewedAt         DateTime?
+  reviewedById       Int?
+
+  // Relations
+  timeClock          TimeClock @relation(fields: [timeClockId], references: [id])
+  employee           Employee  @relation("EmployeeAdjustments", fields: [employeeId], references: [employeeId])
+  reviewedBy         Employee? @relation("AdjustmentReviewer", fields: [reviewedById], references: [id])
+
+  @@index([employeeId])
+}
+
+// ===================== ENUM =====================
+
+enum AdjustmentStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }

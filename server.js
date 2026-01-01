@@ -1,25 +1,37 @@
 import express from 'express';
 import cors from 'cors';
+
 import authRoutes from './routes/auth.routes.js';
 import profileRoutes from './routes/profile.routes.js';
 import employeeRoutes from './routes/employee.routes.js';
+import timeClockRoutes from './routes/timeClock.routes.js';
 
 const app = express();
 
-/* ---------- CORS CONFIG ---------- */
+/* ================= CORS (ONE SOURCE OF TRUTH) ================= */
+const allowedOrigins = [
+    'http://localhost:3000',
+    'http://localhost:3001',
+];
+
 app.use(
     cors({
-        origin: 'http://localhost:3000', // Next.js frontend
-        credentials: true,
+        origin: allowedOrigins,
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
     })
 );
 
+/* ================= BODY PARSER ================= */
 app.use(express.json());
 
+/* ================= ROUTES ================= */
 app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/employees', employeeRoutes);
+app.use('/api/timeclock', timeClockRoutes);
 
+/* ================= SERVER ================= */
 app.listen(5000, () => {
-    console.log('Server running on port 5000');
+    console.log('🚀 API running on http://localhost:5000');
 });
