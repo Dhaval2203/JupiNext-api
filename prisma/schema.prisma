@@ -26,6 +26,7 @@ model Employee {
   isActive           Boolean  @default(true)
   createdAt          DateTime @default(now())
 
+  // Self relation (manager)
   reportingManager   Employee?  @relation("ReportingManager", fields: [reportingManagerId], references: [id])
   subordinates       Employee[] @relation("ReportingManager")
 
@@ -69,30 +70,35 @@ model TimeClock {
   @@index([employeeId])
 }
 
-// ===================== ADJUSTMENT =====================
+// ===================== ATTENDANCE ADJUSTMENT =====================
 
 model AttendanceAdjustment {
-  id                Int      @id @default(autoincrement())
+  id                     Int      @id @default(autoincrement())
 
-  timeClockId       Int      @unique
-  employeeId        String
+  timeClockId            Int      @unique
+  requestedByEmployeeId  String
 
-  requestedSeconds  Int
-  reason             String
-  comment            String?
+  requestedSeconds       Int
+  startTime              DateTime
+  endTime                DateTime
 
-  status             AdjustmentStatus @default(PENDING)
+  reason                 String
+  comment                String?
 
-  requestedAt        DateTime @default(now())
-  reviewedAt         DateTime?
-  reviewedById       Int?
+  status                 AdjustmentStatus @default(PENDING)
 
-  // Relations
-  timeClock          TimeClock @relation(fields: [timeClockId], references: [id])
-  employee           Employee  @relation("EmployeeAdjustments", fields: [employeeId], references: [employeeId])
-  reviewedBy         Employee? @relation("AdjustmentReviewer", fields: [reviewedById], references: [id])
+  requestedAt            DateTime @default(now())
+  reviewedAt             DateTime?
+  reviewedById           Int?
 
-  @@index([employeeId])
+  // Relations (🔥 SINGLE LINE – IMPORTANT)
+  timeClock   TimeClock @relation(fields: [timeClockId], references: [id])
+  requestedBy Employee  @relation("EmployeeAdjustments", fields: [requestedByEmployeeId], references: [employeeId])
+  reviewedBy  Employee? @relation("AdjustmentReviewer", fields: [reviewedById], references: [id])
+
+  @@index([requestedByEmployeeId])
+  @@index([reviewedById])
+  @@index([status])
 }
 
 // ===================== ENUM =====================

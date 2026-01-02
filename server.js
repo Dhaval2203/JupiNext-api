@@ -5,6 +5,7 @@ import authRoutes from './routes/auth.routes.js';
 import profileRoutes from './routes/profile.routes.js';
 import employeeRoutes from './routes/employee.routes.js';
 import timeClockRoutes from './routes/timeClock.routes.js';
+import adjustmentRoutes from './routes/attendanceAdjustment.routes.js';
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/employees', employeeRoutes);
 app.use('/api/timeclock', timeClockRoutes);
+app.use('/api/attendance-adjustment', adjustmentRoutes);
 
 /* ================= SERVER ================= */
 app.listen(5000, () => {

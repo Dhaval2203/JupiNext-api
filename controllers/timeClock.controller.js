@@ -176,6 +176,7 @@ export const getMonthlyTimeClock = async (req, res) => {
                 workDate: 'asc',
             },
             select: {
+                id: true,
                 workDate: true,
                 startWorkTime: true,
                 endWorkTime: true,
@@ -183,6 +184,13 @@ export const getMonthlyTimeClock = async (req, res) => {
                 totalBreakSeconds: true,
                 shortageSeconds: true,
                 isLessThan8Hours: true,
+                hasAdjustmentRequest: true,
+                adjustment: {
+                    select: {
+                        id: true,
+                        status: true,
+                    },
+                },
             },
         });
 
