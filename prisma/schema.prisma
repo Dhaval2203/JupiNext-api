@@ -101,6 +101,22 @@ model AttendanceAdjustment {
   @@index([status])
 }
 
+model Job {
+  id           Int      @id @default(autoincrement())
+  title        String
+  department   String
+  location     String
+  type         String
+  experience   String
+  description  String
+  requirements String[]
+  isActive     Boolean  @default(true)
+  displayOrder Int      @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+
 // ===================== ENUM =====================
 
 enum AdjustmentStatus {

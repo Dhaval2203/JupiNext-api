@@ -6,6 +6,7 @@ import profileRoutes from './routes/profile.routes.js';
 import employeeRoutes from './routes/employee.routes.js';
 import timeClockRoutes from './routes/timeClock.routes.js';
 import adjustmentRoutes from './routes/attendanceAdjustment.routes.js';
+import jobRoutes from './routes/job.routes.js';
 
 const app = express();
 
@@ -29,7 +30,7 @@ app.use(
             return callback(new Error('Not allowed by CORS'));
         },
         credentials: true,
-        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
     })
 );
@@ -43,6 +44,7 @@ app.use('/api/profile', profileRoutes);
 app.use('/api/employees', employeeRoutes);
 app.use('/api/timeclock', timeClockRoutes);
 app.use('/api/attendance-adjustment', adjustmentRoutes);
+app.use('/api/jobs', jobRoutes);
 
 /* ================= SERVER ================= */
 const PORT = process.env.PORT || 5000;
