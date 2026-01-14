@@ -13,6 +13,9 @@ const app = express();
 const allowedOrigins = [
     'http://localhost:3000',
     'http://localhost:3001',
+    'https://www.jupinext.com',           // ✅ Production frontend
+    'https://jupinext.com',               // ✅ Without www,
+    "https://jupinext-api.onrender.com"
 ];
 
 app.use(
