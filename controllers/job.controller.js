@@ -1,11 +1,27 @@
 import prisma from '../prisma/client.js';
 
 /* ================= GET ALL ================= */
-export const getJobs = async (_req, res) => {
-    const jobs = await prisma.job.findMany({
-        orderBy: { displayOrder: 'asc' },
-    });
-    res.json(jobs);
+export const getJobs = async (req, res) => {
+    try {
+        const { active } = req.query;
+
+        const where = {};
+
+        // If active=true or active=false is passed
+        if (active !== undefined) {
+            where.isActive = active === 'true';
+        }
+
+        const jobs = await prisma.job.findMany({
+            where,
+            orderBy: { displayOrder: 'asc' },
+        });
+
+        res.json(jobs);
+    } catch (error) {
+        console.error('Error fetching jobs:', error);
+        res.status(500).json({ message: 'Failed to fetch jobs' });
+    }
 };
 
 /* ================= CREATE ================= */
