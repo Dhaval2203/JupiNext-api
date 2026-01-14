@@ -9,19 +9,25 @@ import adjustmentRoutes from './routes/attendanceAdjustment.routes.js';
 
 const app = express();
 
-/* ================= CORS (ONE SOURCE OF TRUTH) ================= */
+/* ================= CORS ================= */
 const allowedOrigins = [
     'http://localhost:3000',
     'http://localhost:3001',
-    'https://www.jupinext.com',           // ✅ Production frontend
-    'https://jupinext.com',               // ✅ Without www,
-    "https://jupinext-api.onrender.com"
+    'https://www.jupinext.com',
+    'https://jupinext.com',
 ];
 
 app.use(
     cors({
-        origin: allowedOrigins,
-        methods: ['GET', 'POST', 'PUT', 'DELETE'],
+        origin: (origin, callback) => {
+            if (!origin) return callback(null, true);
+            if (allowedOrigins.includes(origin)) {
+                return callback(null, true);
+            }
+            return callback(new Error('Not allowed by CORS'));
+        },
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
     })
 );
@@ -37,6 +43,7 @@ app.use('/api/timeclock', timeClockRoutes);
 app.use('/api/attendance-adjustment', adjustmentRoutes);
 
 /* ================= SERVER ================= */
-app.listen(5000, () => {
-    console.log('🚀 API running on http://localhost:5000');
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`🚀 API running on port ${PORT}`);
 });
