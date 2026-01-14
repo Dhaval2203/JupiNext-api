@@ -13,30 +13,18 @@ const app = express();
 const allowedOrigins = [
     'http://localhost:3000',
     'http://localhost:3001',
-    'https://www.jupinext.com',
-    'https://jupinext.com',
+    'https://www.jupinext.com',           // ✅ Production frontend
+    'https://jupinext.com',               // ✅ Without www,
+    "https://jupinext-api.onrender.com"
 ];
 
 app.use(
     cors({
-        origin: (origin, callback) => {
-            // Allow Postman, server-to-server, cron jobs
-            if (!origin) return callback(null, true);
-
-            if (allowedOrigins.includes(origin)) {
-                return callback(null, true);
-            }
-
-            return callback(new Error('Not allowed by CORS'));
-        },
-        credentials: true,
-        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        origin: allowedOrigins,
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],
         allowedHeaders: ['Content-Type', 'Authorization'],
     })
 );
-
-// ✅ IMPORTANT: explicitly handle preflight
-app.options('*', cors());
 
 /* ================= BODY PARSER ================= */
 app.use(express.json());
