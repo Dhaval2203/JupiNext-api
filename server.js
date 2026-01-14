@@ -15,7 +15,7 @@ const allowedOrigins = [
     'http://localhost:3001',
     'https://www.jupinext.com',
     'https://jupinext.com',
-    'https://jupinext.netlify.app',
+    'https://jupinext-employee.netlify.app',
 ];
 
 app.use(
